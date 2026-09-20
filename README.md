@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # BidLens
 
 BidLens extracts procurement fields from mixed RFP packets containing HTML and PDF documents, stores the result as JSON, and provides a small browser dashboard for searching and reviewing the extracted bids.
