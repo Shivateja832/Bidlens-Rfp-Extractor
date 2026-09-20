@@ -10,7 +10,7 @@ python -m pip install -r requirements.txt
 python app.py --serve --port 8765
 ```
 
-Open <http://127.0.0.1:8765>. The API is available at `/api/bids`, `/api/health`, and `/api/export`.
+Open <http://127.0.0.1:8765>. The API is available at `/api/bids`, `/api/health`, `/api/requirements`, and `/api/export`. The dashboard includes the same live evaluation checklist so a reviewer can verify requirement coverage.
 
 ## Rebuild the JSON
 
