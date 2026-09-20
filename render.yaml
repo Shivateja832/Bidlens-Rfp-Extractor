@@ -1,0 +1,7 @@
+services:
+  - type: web
+    name: bidlens
+    env: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /api/health
+    autoDeploy: true

@@ -45,6 +45,7 @@ The container exposes the dashboard at `http://localhost:8080`.
 - `requirements.txt` - runtime dependency
 - `Dockerfile` - production container definition
 - `.dockerignore` - container build exclusions
+- `render.yaml` - Render deployment blueprint
 
 ## Validation
 
