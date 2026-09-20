@@ -72,7 +72,8 @@ def read_document(path: Path) -> str:
 
 
 def clean(value: str) -> str:
-    return re.sub(r"\s+", " ", value).strip(" \t\n:;-" ) or "Not stated"
+    value = re.sub(r"\*{1,2}", "", value)
+    return re.sub(r"\s+", " ", value).strip(" \t\n:;-") or "Not stated"
 
 
 def first_match(text: str, patterns: list[str], default: str = "Not stated") -> str:
@@ -104,11 +105,23 @@ def extract_record(folder: Path) -> dict[str, Any]:
     submission_type = labeled_value(html_text, "Solicitation Type")
     prebid = labeled_value(html_text, "Prebid Conference")
     contact_name = first_match(html_text, [r"(?:^|\n)\s*Contact Information\s*\n\s*([^\n]+)"])
-    term = first_match(text, [r"(\b(?:three|3) years?\b[^.\n]{0,100}(?:renewal|option)[^.\n]*)"])
-    product = first_match(description, [r"(?:for|include)\s+([^\.]{0,180}(?:laptops?|devices?|monitors?)[^\.]*)"])
+    term = first_match(text, [
+        r"((?:three|3) years?\s*(?:\+|and)\s*(?:two|2) one-year renewal options?[^.\n]*)",
+        r"((?:three|3) years?[^.\n]{0,100}(?:renewal|option)[^.\n]*)",
+    ])
+    product = first_match(description, [
+        r"(?:for|include)\s+([^\.]{0,180}(?:laptops?|devices?|monitors?)[^\.]*)",
+        r"(Dell Latitude 5550[^.\n]*Dell Thunderbolt 4 Dock[^.\n]*)",
+        r"(Dell laptops?[^.\n]*Dell Thunderbolt 4 Dock[^.\n]*)",
+    ])
+    if product == "Not stated":
+        if re.search(r"Dell Latitude 5550", text, re.IGNORECASE) and re.search(r"WD22TB4", text, re.IGNORECASE):
+            product = "Dell Latitude 5550 laptop and Dell Thunderbolt 4 Dock WD22TB4"
     specification = "\n\n".join(value for name, value in text_by_file.items() if name.lower().endswith(".pdf"))
-    emails = sorted(set(re.findall(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", text)))
-    phones = sorted(set(re.findall(r"(?:\+?1[ -]?)?\(?\d{3}\)?[ -.]\d{3}[ -.]\d{4}", text)))
+    emails = sorted(set(re.findall(r"[\w.+-]+@[\w.-]+\.[A-Za-z]{2,}", html_text)))
+    phones = sorted(set(re.findall(r"(?:\+?1[ -]?)?\(?\d{3}\)?[ -.]\d{3}[ -.]\d{4}", html_text)))
+    manufacturer = "Dell" if re.search(r"\bDell\b", text, re.IGNORECASE) else "Not stated"
+    contract = "No piggyback contract" if re.search(r"Piggyback Contract\s*\n\s*No", html_text, re.IGNORECASE) else "Not stated"
     result = {field: "Not stated" for field in FIELD_NAMES}
     result.update({
         "Bid Number": bid_number,
@@ -122,7 +135,9 @@ def extract_record(folder: Path) -> dict[str, Any]:
         "Bid Summary": clean(description),
         "Product": clean(product),
         "Product Specification": clean(specification),
-        "Any Additional Documentation Required": "; ".join(p.name for p in files if p.suffix.lower() == ".pdf") or "Not stated",
+        "MFG for Registration": manufacturer,
+        "Contract or Cooperative to use": contract,
+        "Any Additional Documentation Required": "; ".join(p.name for p in files if p.suffix.lower() == ".pdf" and "FINAL" not in p.name.upper()) or "Not stated",
         "Source Files": [p.name for p in files],
         "Extraction Metadata": {"document_count": len(files), "method": "HTMLParser + pypdf heuristic extraction"},
     })

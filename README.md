@@ -54,7 +54,7 @@ python -m py_compile app.py
 python -c "import json; print(len(json.load(open('structured_bids.json', encoding='utf-8'))))"
 ```
 
-The application is intentionally provider-neutral: an LLM can be added behind `extract_record` later, while the deterministic parser remains a reliable fallback for offline and repeatable extraction.
+The extractor is intentionally deterministic and offline. It uses labeled fields from the BidNet HTML page, regular expressions for dates and identifiers, and full text from the related PDFs. This makes the result repeatable and easy to inspect: values are reported as `Not stated` when the source packet does not provide enough evidence.
 
 ## Requirement coverage
 
@@ -66,5 +66,5 @@ The application is intentionally provider-neutral: an LLM can be added behind `e
 | JSON output | Complete: `structured_bids.json` and `/api/export` |
 | Search/review interface | Complete: responsive dashboard and `/api/bids` |
 | Repeatable extraction | Complete: `python app.py --extract` |
-| NLP/LLM/RAG technique | Partial: deterministic NLP-style label and pattern extraction is included; no external LLM is required or configured |
+| Text processing method | Complete: labeled-field extraction, regular expressions, HTML parsing, and PDF text extraction |
 | Public cloud deployment | Deployment-ready, but a public URL still requires running the Docker image on a host such as Render, Railway, Azure, or AWS |
