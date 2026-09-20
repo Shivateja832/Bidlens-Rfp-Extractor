@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # BidLens
 
 BidLens extracts procurement fields from mixed RFP packets containing HTML and PDF documents, stores the result as JSON, and provides a small browser dashboard for searching and reviewing the extracted bids.
@@ -68,4 +67,4 @@ The extractor is intentionally deterministic and offline. It uses labeled fields
 | Search/review interface | Complete: responsive dashboard and `/api/bids` |
 | Repeatable extraction | Complete: `python app.py --extract` |
 | Text processing method | Complete: labeled-field extraction, regular expressions, HTML parsing, and PDF text extraction |
-| Public cloud deployment | Deployment-ready, but a public URL still requires running the Docker image on a host such as Render, Railway, Azure, or AWS |
+| Public cloud deployment | Complete on Render: https://bidlens-rfp-extractor.onrender.com |

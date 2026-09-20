@@ -8,6 +8,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
@@ -163,7 +164,7 @@ def requirement_status() -> list[dict[str, str]]:
         {"requirement": "Search and review interface", "status": "Complete", "evidence": "BidLens dashboard"},
         {"requirement": "Repeatable extraction command", "status": "Complete", "evidence": "python app.py --extract"},
         {"requirement": "Deployment configuration", "status": "Complete", "evidence": "Dockerfile and render.yaml"},
-        {"requirement": "Public cloud URL", "status": "Pending hosting setup", "evidence": "Connect the repository to Render"},
+        {"requirement": "Public cloud URL", "status": "Complete" if os.getenv("RENDER_EXTERNAL_URL") else "Pending hosting setup", "evidence": os.getenv("RENDER_EXTERNAL_URL", "Connect the repository to Render")},
     ]
 
 
